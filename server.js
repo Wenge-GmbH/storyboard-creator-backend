@@ -21,6 +21,12 @@ const staticDirectory = `${__dirname}/../storyboard-creator-frontend/build`;
 app.use(express.static(staticDirectory))
 
 var editorState;
+
+app.get('/editor-state', (req, res) => {
+  res.send(editorState);
+})
+
+
 io.on('connection', (socket) => {
   // socket.emit('welcome', 'Hello WOrld');
   // socket.on('check-editor', (data) => {
@@ -34,9 +40,9 @@ io.on('connection', (socket) => {
   //   editorState = editorData;
   //   socket.broadcast.emit('editor-state', editorData)
   // })
-  socket.on('sync-editor', ops => {
-    console.log('asd');
-    socket.broadcast.emit('sync-editor', ops);
+  socket.on('sync-editor', ({operations, state}) => {
+    editorState = state;
+    socket.broadcast.emit('sync-editor', operations);
   })
 })
 
