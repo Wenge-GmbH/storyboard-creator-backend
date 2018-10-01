@@ -12,26 +12,31 @@ const server = require('http').Server(app);
 const io = require('socket.io')(server);
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
+// gotta check if neede >_>
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
-app.use(morgan());
+app.use(morgan('combined'));
 
 const staticDirectory = `${__dirname}/../storyboard-creator-frontend/build`;
 app.use(express.static(staticDirectory))
 
 var editorState;
 io.on('connection', (socket) => {
-  socket.emit('welcome', 'Hello WOrld');
-  socket.on('check-editor', (data) => {
-    console.log('hi');
-    console.log(editorState);
-    if(editorState)
-      socket.emit('editor-state', editorState);
-  })
-
-  socket.on('editor-state', (editorData) => {
-    editorState = editorData;
-    socket.broadcast.emit('editor-state', editorData)
+  // socket.emit('welcome', 'Hello WOrld');
+  // socket.on('check-editor', (data) => {
+  //   console.log('hi');
+  //   console.log(editorState);
+  //   if(editorState)
+  //     socket.emit('editor-state', editorState);
+  // })
+  //
+  // socket.on('editor-state', (editorData) => {
+  //   editorState = editorData;
+  //   socket.broadcast.emit('editor-state', editorData)
+  // })
+  socket.on('sync-editor', ops => {
+    console.log('asd');
+    socket.broadcast.emit('sync-editor', ops);
   })
 })
 
